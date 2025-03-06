@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Imperial+Script&family=Ms+Madi&family=Send+Flowers&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda+SC:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&display=swap');
+@import "tailwindcss";
+
+
+a.active hr{
+  display: block;
+}
+
+.bodoni-moda-sc-sub {
+  font-family: "Bodoni Moda SC", serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+
+.send-flowers-regular {
+  font-family: "Send Flowers", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
