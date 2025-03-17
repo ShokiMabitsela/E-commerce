@@ -1,41 +1,37 @@
-import express from 'express';
-import cors from 'cors';
-import 'dotenv/config';
-import connectDB from './config/mongodb.js';
-import connectCloudinary from './config/cloudinary.js';
-import userRouter from './routes/userRouter.js';  // Ensure the userRouter is correctly imported
-import productRouter from './routes/productRouter.js';
-import User from "./models/userModel.js";  // User Model
+import "dotenv/config";
+import express from "express"; // Handles server requests and responses
+import cookieParser from "cookie-parser";
+import connectToDB from "./config/mongodb.js";
+import { PORT } from "./constants/env.const.js";
+import { OK } from "./constants/http.codes.js";
+import authRouter from "./routes/authRouter.js";
+import { errorHandler, notFound } from "./middleware/errorHandler.js";
+import userRouter from "./routes/userRouter.js";
 
-// App config
 const app = express();
-const port = process.env.PORT || 8080;
-connectDB();
-connectCloudinary();
 
 // Middleware
 app.use(express.json());
-app.use(cors({
-  origin: ["http://localhost:5173", "http://localhost:5174"], 
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-}));
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
-// API endpoints
-app.use('/api/user', userRouter);  
-app.use('/api/product', productRouter);
-
-// Ensure the /api/users route exists
-app.get('/api/user', async (req, res) => {
-  try {
-    const users = await User.find().limit(10);  
-    return res.json({ users });  
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
+// Testing route
+app.get("/", (req, res) => {
+  res.status(OK).json({
+    status: "success",
+  });
 });
 
+// API routes
+app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/user", userRouter);
+
+// Error handling
+app.use(notFound);
+app.use(errorHandler);
+
 // Start the server
-app.listen(port, () => console.log('Server started on PORT:' + port));
+app.listen(PORT, async () => {
+  console.log(`Connected at PORT : ${PORT}`);
+  await connectToDB();
+});
